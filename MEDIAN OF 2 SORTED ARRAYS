@@ -1,0 +1,33 @@
+class Solution:
+    def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:
+        # 1. Always binary search on the smaller array for efficiency
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
+        
+        m, n = len(nums1), len(nums2)
+        low, high = 0, m
+        half_len = (m + n + 1) // 2
+        
+        while low <= high:
+            # 2. Partition arrays
+            i = (low + high) // 2
+            j = half_len - i
+            
+            # 3. Handle edge cases (infinity for empty partitions)
+            maxLeft1 = nums1[i-1] if i > 0 else float("-inf")
+            minRight1 = nums1[i] if i < m else float("inf")
+            maxLeft2 = nums2[j-1] if j > 0 else float("-inf")
+            minRight2 = nums2[j] if j < n else float("inf")
+            
+            # 4. Check if partition is correct
+            if maxLeft1 <= minRight2 and maxLeft2 <= minRight1:
+                # Odd total: max of left side
+                if (m + n) % 2:
+                    return float(max(maxLeft1, maxLeft2))
+                # Even total: average of middle elements
+                return (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) / 2.0
+            
+            elif maxLeft1 > minRight2:
+                high = i - 1  # Move left in nums1
+            else:
+                low = i + 1   # Move right in nums1
