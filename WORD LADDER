@@ -1,0 +1,27 @@
+from collections import deque
+
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        wordSet = set(wordList) # O(1) lookups
+        if endWord not in wordSet:
+            return 0
+        
+        # Queue stores (current_word, level)
+        queue = deque([(beginWord, 1)])
+        
+        while queue:
+            word, level = queue.popleft()
+            
+            if word == endWord:
+                return level
+            
+            # Generate all possible neighbors by changing one character
+            for i in range(len(word)):
+                for char in 'abcdefghijklmnopqrstuvwxyz':
+                    next_word = word[:i] + char + word[i+1:]
+                    
+                    if next_word in wordSet:
+                        queue.append((next_word, level + 1))
+                        wordSet.remove(next_word) # Mark as visited to avoid cycles
+                        
+        return 0
